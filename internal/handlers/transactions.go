@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/normalniydada/test_task_infotecs/internal/models/dto"
 	"github.com/normalniydada/test_task_infotecs/internal/services"
-	"github.com/normalniydada/test_task_infotecs/internal/storage"
 	"gorm.io/gorm"
 	"net/http"
 	"strconv"
@@ -35,7 +34,7 @@ func GetLastTransactions(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		transactions, err := storage.GetLastNTransactions(db, count)
+		transactions, err := services.GetLastNTransactions(db, count)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
