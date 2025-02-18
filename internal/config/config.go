@@ -43,11 +43,11 @@ type DatabaseConfig struct {
 //
 // Параметры:
 //
-//	zLog - указатель на zap.Logger, используемый для логирования.
+//	-zLog - указатель на zap.Logger, используемый для логирования.
 //
 // Возвращает:
 //
-//	*Config: указатель на загруженную конфигурацию.
+//	-*Config: указатель на загруженную конфигурацию.
 func MustLoad(zLog *zap.Logger) *Config {
 	viper.SetConfigName("config")          // Имя файла-конфигурации
 	viper.SetConfigType("yaml")            // Формат файла-конфигурации
