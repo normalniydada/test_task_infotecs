@@ -45,7 +45,7 @@ func GetLastTransactions(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// SendTransaction выполняет перевод средств между кошельками
+// SendTransaction выполняет перевод средств между кошельками.
 //
 // POST /api/send
 //
@@ -84,9 +84,9 @@ func SendTransaction(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// convertMoneyToInt преобразует сумму в условных единицах (float64) в целочисленное значение (int64)
+// convertMoneyToInt преобразует сумму в у.е. (float64) в целочисленное значение (int64)
 //
-// Например, convertMoneyToInt(50.75) вернёт 5075 (копейки)
+// Например, convertMoneyToInt(234.75) вернёт 23475 (копейки)
 func convertMoneyToInt(value float64) int64 {
 	return int64(value * 100)
 }

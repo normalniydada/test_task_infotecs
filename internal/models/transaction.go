@@ -1,4 +1,4 @@
-// Package models содержит описание структур базы данных для работы с транзакциями и кошельками
+// Package models содержит описание структур базы данных для работы с транзакциями
 package models
 
 import "time"
@@ -11,10 +11,11 @@ import "time"
 //   - To (string) — адрес кошелька получателя (индексирован для быстрого поиска)
 //   - Amount (int64) — сумма перевода в минимальных единицах валюты (копейки)
 //   - CreatedAt (time.Time) — время создания транзакции (автоматически проставляется GORM)
+
 type Transaction struct {
 	ID        uint      `gorm:"primary_key"`                // Уникальный идентификатор транзакции
-	From      string    `gorm:"index:idx_transaction_from"` // Адрес отправителя
-	To        string    `gorm:"index:idx_transaction_to"`   // Адрес получателя
-	Amount    int64     `gorm:"not null"`                   // Сумма перевода в минимальных единицах
+	From      string    `gorm:"index:idx_transaction_from"` // Адрес кошелька отправителя
+	To        string    `gorm:"index:idx_transaction_to"`   // Адрес кошелька получателя
+	Amount    int64     `gorm:"not null"`                   // Сумма перевода
 	CreatedAt time.Time `gorm:"autoCreateTime"`             // Дата и время создания транзакции
 }

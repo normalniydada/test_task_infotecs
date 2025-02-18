@@ -14,7 +14,7 @@ import (
 //   - Balance (int64) — баланс кошелька в минимальных единицах валюты (копейки)
 type Wallet struct {
 	Address string `gorm:"primaryKey;size:64;index:idx_wallet_address"` // Уникальный адрес кошелька
-	Balance int64  `gorm:"not null"`                                    // Баланс кошелька в минимальных единицах
+	Balance int64  `gorm:"not null"`                                    // Баланс кошелька
 }
 
 // CreateWalletAddress генерирует новый уникальный адрес кошелька

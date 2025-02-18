@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-// Определение возможных ошибок
+// Определение возможных ошибок при переводе средств
 var (
 	ErrSenderNotFound   = errors.New("sender not found")   // Ошибка: кошелек отправителя не найден
 	ErrReceiverNotFound = errors.New("receiver not found") // Ошибка: кошелек получателя не найден
@@ -17,21 +17,28 @@ var (
 	ErrInvalidAmount    = errors.New("invalid amount")     // Ошибка: сумма перевода должна быть больше 0
 )
 
-// TransferMoney выполняет перевод средств между двумя кошельками
+// TransferMoney выполняет перевод средств между двумя кошельками с учётом конкурентного доступа.
 //
-// # Функция использует GORM-транзакцию и блокировку `FOR UPDATE` для предотвращения race condition
+// Функция использует GORM-транзакцию и блокировку `FOR UPDATE` для предотвращения race condition.
 //
 // Параметры:
-//   - db (*gorm.DB): подключение к базе данных
-//   - from (string): адрес кошелька отправителя
-//   - to (string): адрес кошелька получателя
-//   - amount (int64): сумма перевода в минимальных единицах валюты (копейки)
+//   - db (*gorm.DB): подключение к базе данных.
+//   - from (string): адрес кошелька отправителя.
+//   - to (string): адрес кошелька получателя.
+//   - amount (int64): сумма перевода в минимальных единицах валюты (например, копейки).
+//
+// Возможные ошибки:
+//   - ErrInvalidAmount: если сумма перевода <= 0.
+//   - ErrSelfTransfer: если отправитель и получатель совпадают.
+//   - ErrSenderNotFound: если кошелек отправителя не найден в базе данных.
+//   - ErrReceiverNotFound: если кошелек получателя не найден в базе данных.
+//   - ErrNotEnoughMoney: если у отправителя недостаточно средств.
 //
 // Логика работы:
 //  1. Проверка, что сумма > 0 и кошельки отправителя и получателя разные
 //  2. Использование `db.Transaction()`, чтобы выполнить перевод атомарно
-//  3. Блокировка записи `FOR UPDATE`, чтобы избежать race condition
-//  4. Проверка наличие средств у отправителя перед уменьшением баланса
+//  3. Блокирование записи `FOR UPDATE`, чтобы избежать состояния гонки
+//  4. Проверка наличия средств у отправителя перед уменьшением баланса
 //  5. Обновление балансов отправителя и получателя
 //  6. Создание записи транзакции в базе данных
 //  7. В случае ошибки откат изменений
@@ -47,7 +54,7 @@ func TransferMoney(db *gorm.DB, from string, to string, amount int64) error {
 	return db.Transaction(func(tx *gorm.DB) error {
 		var fromWallet, toWallet models.Wallet
 
-		// Блокировка кошелька отправителя
+		// Блокирование кошелька отправителя
 		if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
 			Where("address = ?", from).
 			First(&fromWallet).
@@ -55,7 +62,7 @@ func TransferMoney(db *gorm.DB, from string, to string, amount int64) error {
 			return ErrSenderNotFound
 		}
 
-		// Блокировка кошелька получателя
+		// Блокирование кошелька получателя
 		if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
 			Where("address = ?", to).
 			First(&toWallet).
@@ -63,7 +70,7 @@ func TransferMoney(db *gorm.DB, from string, to string, amount int64) error {
 			return ErrReceiverNotFound
 		}
 
-		// Проверка баланс отправителя перед списанием
+		// Проверка баланса отправителя перед списанием
 		if err := tx.Model(&fromWallet).
 			Where("balance >= ?", amount).
 			Update("balance", gorm.Expr("balance - ?", amount)).

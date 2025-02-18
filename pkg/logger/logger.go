@@ -1,5 +1,4 @@
-// Package logger отвечает за инициализацию логгера Zap в зависимости от окружения
-// (local/dev/prod)
+// Package logger отвечает за инициализацию логгера Zap в зависимости от окружения (local/dev/prod)
 package logger
 
 import (
@@ -24,7 +23,6 @@ func InitLogger() *zap.Logger {
 	env := os.Getenv("ENV")
 
 	var cfg zap.Config
-	// Настройка конфигурации логгера
 	switch env {
 	case "local":
 		cfg = zap.NewDevelopmentConfig()

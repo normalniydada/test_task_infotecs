@@ -17,10 +17,10 @@ import (
 //   - error: ошибку при выполнении запроса или nil, если всё прошло успешно
 //
 // Логика работы:
-//  1. Выполняет SQL-запрос с сортировкой `ORDER BY created_at DESC`
-//  2. Ограничивает количество результатов `LIMIT count`
-//  3. Заполняет слайс `transactions` полученными данными
-//  4. Возвращает полученные транзакции или ошибку при запросе
+//  1. Выполннение SQL-запроса с сортировкой `ORDER BY created_at DESC`
+//  2. Ограничение количества результатов `LIMIT count`
+//  3. Заполнение слайса `transactions` полученными данными
+//  4. Возвращение полученных транзакций или ошибки при запросе
 func GetLastNTransactions(db *gorm.DB, count int) ([]models.Transaction, error) {
 	var transactions []models.Transaction
 	err := db.Order("created_at desc").Limit(count).Find(&transactions).Error

@@ -1,7 +1,7 @@
-// Package dto содержит структуры для передачи данных в API
+// Package dto содержит структуры для передачи данных DTO в API
 package dto
 
-// TransactionRequest представляет тело запроса для перевода средств
+// TransactionRequest представляет тело запроса для перевода средств.
 //
 // Используется в API `POST /api/send`.
 //

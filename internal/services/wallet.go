@@ -7,14 +7,13 @@ import (
 	"gorm.io/gorm"
 )
 
-// Ошибка: кошелек с указанным адресом не найден
-var ErrWalletNotFound = errors.New("wallet not found")
+var ErrWalletNotFound = errors.New("wallet not found") // Ошибка: кошелек с указанным адресом не найден
 
 // GetWalletBalance получает баланс кошелька по его адресу
 //
 // Параметры:
 //   - db (*gorm.DB): подключение к базе данных
-//   - address (string): адрес кошелька
+//   - address (string): адрес кошелька, баланс которого нужно получить
 //
 // Возвращает:
 //   - int64: баланс кошелька в минимальных единицах валюты (копейки)
@@ -22,9 +21,9 @@ var ErrWalletNotFound = errors.New("wallet not found")
 //
 // Логика работы:
 //  1. Выполняется поиск кошелька в базе данных по `address`
-//  2. Если кошелек найден, возвращение его баланса
-//  3. Если кошелек отсутствует, возвращение ErrWalletNotFound
-//  4. В случае ошибки в базе данных - возврат ошибки
+//  2. Если кошелек найден, возвращается его баланс
+//  3. Если кошелек отсутствует, возвращается ErrWalletNotFound
+//  4. Возврат ошибки, в случае возникновения ее в базе данных
 func GetWalletBalance(db *gorm.DB, address string) (int64, error) {
 	var wallet models.Wallet
 	if err := db.Where("address = ?", address).First(&wallet).Error; err != nil {

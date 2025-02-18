@@ -24,11 +24,10 @@ import (
 //   - Завершает работу приложения, если произошла ошибка при миграции таблиц
 //
 // Логика работы:
-//   1. Формирует строку подключения DSN (Data Source Name)
-//   2. Открывает соединение с базой данных через GORM
-//   3. Выполняет автоматические миграции (`AutoMigrate`) для таблиц `Wallet` и `Transaction`
-//   4. Логирует успешное подключение и миграцию
-
+//  1. Формирование строки подключения DSN к базе данных.
+//  2. Открытие соединения с базой данных через GORM
+//  3. Выполнение автоматические миграции (`AutoMigrate`) для таблиц `Wallet` и `Transaction`
+//  4. Логирование успешного подключение и миграции
 func InitDB(cfg *config.DatabaseConfig, zLog *zap.Logger) *gorm.DB {
 	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
 		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DBName, cfg.SSlMode)
@@ -43,6 +42,7 @@ func InitDB(cfg *config.DatabaseConfig, zLog *zap.Logger) *gorm.DB {
 		zap.Int("port", cfg.Port),
 	)
 
+	// Миграция
 	if err = db.AutoMigrate(&models.Wallet{}, &models.Transaction{}); err != nil {
 		zLog.Fatal("Database migration error: ", zap.Error(err))
 	}
@@ -62,9 +62,9 @@ func InitDB(cfg *config.DatabaseConfig, zLog *zap.Logger) *gorm.DB {
 //   - Логирует ошибку, если не удалось корректно закрыть соединение
 //
 // Логика работы:
-//  1. Получает `*sql.DB` из `gorm.DB`
-//  2. Закрывает соединение с базой данных
-//  3. Логирует успешное завершение операции
+//  1. Получение `*sql.DB` из `gorm.DB`
+//  2. Закрытие соединения с базой данных
+//  3. Логирование успешного завершение операции
 func CloseDB(db *gorm.DB, zLog *zap.Logger) {
 	pdb, err := db.DB()
 	if err != nil {
