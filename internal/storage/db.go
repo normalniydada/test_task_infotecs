@@ -79,10 +79,10 @@ func CloseDB(db *gorm.DB, zLog *zap.Logger) {
 	}
 }
 
-//func Truncate(db *gorm.DB) error {
-//	if err := db.Exec("TRUNCATE TABLE wallets, transactions RESTART IDENTITY CASCADE").Error; err != nil {
-//		return err
-//	}
-//	log.Println("[DB] Tables clear!")
-//	return nil
-//}
+/*func Truncate(db *gorm.DB) error {
+	if err := db.Exec("TRUNCATE TABLE wallets, transactions RESTART IDENTITY CASCADE").Error; err != nil {
+		return err
+	}
+	log.Println("[DB] Tables clear!")
+	return nil
+}*/

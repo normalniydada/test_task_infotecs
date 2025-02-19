@@ -30,7 +30,7 @@ type DatabaseConfig struct {
 	// Password - пароль пользователя для подключения к базе данных
 	Password string `yaml:"password"`
 	//  DBName - имя базы данных
-	DBName string `yaml:"dbname"`
+	DBName string `yaml:"dbname" env-default:"postgres"`
 	// SSLMode - режим SSL (по умолчанию: "disable")
 	SSlMode string `yaml:"sslmode" env-default:"disable"`
 }
