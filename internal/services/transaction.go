@@ -71,11 +71,15 @@ func TransferMoney(db *gorm.DB, from string, to string, amount int64) error {
 		}
 
 		// Проверка баланса отправителя перед списанием
+		if fromWallet.Balance < amount {
+			return ErrNotEnoughMoney
+		}
+
+		// Списание средств с кошелька отправителя
 		if err := tx.Model(&fromWallet).
-			Where("balance >= ?", amount).
 			Update("balance", gorm.Expr("balance - ?", amount)).
 			Error; err != nil {
-			return ErrNotEnoughMoney
+			return err
 		}
 
 		// Начисление средств получателю
