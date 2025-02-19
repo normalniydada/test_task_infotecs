@@ -1,4 +1,3 @@
-# Используем официальный образ Go для сборки
 FROM golang:1.23.0 AS builder
 
 WORKDIR /app
@@ -23,5 +22,4 @@ COPY --from=builder /app/internal/config/config.yaml ./internal/config/config.ya
 
 RUN chmod +x main
 
-# Команда для запуска
 CMD ["./main"]
